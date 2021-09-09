@@ -1,0 +1,29 @@
+name: Dotnet Build
+description: Builds a .NET solution or project
+
+branding:
+  color: green
+  icon: check
+
+inputs:
+  build-args:
+    description: Additional build arguments to pass to 'dotnet build'.
+    required: false
+  build-configuration:
+    description: The build configuration to use (defaults to 'Release').
+    required: false
+    default: Release
+  path:
+    description: The path to the project or solution to build (defaults to the current directory).
+    required: false
+    default: .
+
+runs:
+  using: composite
+  steps:
+    - name: Restore Nuget packages
+      shell: bash
+      run: dotnet restore ${{ inputs.path }}
+    - name: Build Solution
+      shell: bash
+      run: dotnet build ${{ inputs.path }} -c "${{ inputs.build-configuration }}" --no-restore ${{ inputs.build-args }}
