@@ -1,0 +1,25 @@
+name: Composite Actions CI
+
+on:
+  push:
+    tags:
+      - "*"
+
+concurrency: new-tag
+jobs:
+  release-checks:
+    name: Release Checks
+    runs-on: ubuntu-20.04
+    outputs:
+      should-release: ${{ steps.semver.outputs.should-release }}
+    steps:
+      - id: semver
+        name: Semantic Version Checks
+        uses: ldeluigi/action-sem-ver-checks@v0
+  release:
+    name: GitHub Release Job
+    if: ${{ needs.release-checks.outputs.should-release == 'true' }}
+    needs: [release-checks]
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: ldeluigi/action-sem-ver-release@v0
