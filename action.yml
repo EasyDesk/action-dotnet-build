@@ -23,7 +23,7 @@ runs:
   steps:
     - name: Restore Nuget packages
       shell: bash
-      run: dotnet restore ${{ inputs.path }}
+      run: dotnet restore '${{ inputs.path }}'
     - name: Build Solution
       shell: bash
-      run: dotnet build ${{ inputs.path }} -c "${{ inputs.build-configuration }}" --no-restore ${{ inputs.build-args }}
+      run: dotnet build '${{ inputs.path }}' -c '${{ inputs.build-configuration }}' --no-restore ${{ inputs.build-args }}
