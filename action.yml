@@ -1,4 +1,4 @@
-name: Dotnet Build
+name: .Net Build
 description: Builds a .NET solution or project
 
 branding:
