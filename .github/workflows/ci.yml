@@ -1,4 +1,4 @@
-name: Composite Actions CI
+name: Action CI
 
 on:
   push:
@@ -7,19 +7,16 @@ on:
 
 concurrency: new-tag
 jobs:
-  release-checks:
-    name: Release Checks
-    runs-on: ubuntu-20.04
-    outputs:
-      should-release: ${{ steps.semver.outputs.should-release }}
-    steps:
-      - id: semver
-        name: Semantic Version Checks
-        uses: ldeluigi/action-sem-ver-checks@v0
   release:
-    name: GitHub Release Job
-    if: ${{ needs.release-checks.outputs.should-release == 'true' }}
-    needs: [release-checks]
+    name: GitHub Release
     runs-on: ubuntu-20.04
     steps:
-      - uses: ldeluigi/action-sem-ver-release@v0
+      - id: semver-checkout
+        name: Checkout
+        uses: EasyDesk/action-semver-checkout@v1
+      - name: Release
+        if: ${{ steps.semver-checkout.outputs.should-release == 'true' }}
+        uses: EasyDesk/action-semver-release@v1
+        with:
+          version: ${{ steps.semver-checkout.outputs.version }}
+          prerelease: ${{ steps.semver-checkout.outputs.is-github-prerelease }}
