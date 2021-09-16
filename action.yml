@@ -17,6 +17,10 @@ inputs:
     description: The path to the project or solution to build (defaults to the current directory).
     required: false
     default: .
+  warnings-as-errors:
+    description: Whether to treat warnings as errors.
+    required: false
+    default: 'false'
 
 runs:
   using: composite
@@ -26,4 +30,9 @@ runs:
       run: dotnet restore '${{ inputs.path }}'
     - name: Build Solution
       shell: bash
-      run: dotnet build '${{ inputs.path }}' -c '${{ inputs.build-configuration }}' --no-restore ${{ inputs.build-args }}
+      run: |
+        ARGS='${{ inputs.build-args }}'
+        if [[ '${{ inputs.warnings-as-errors }}' == 'true' ]] ; then
+          ARGS="-warnaserror $ARGS"
+        fi
+        dotnet build '${{ inputs.path }}' -c '${{ inputs.build-configuration }}' --no-restore $ARGS
