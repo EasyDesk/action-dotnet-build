@@ -26,21 +26,15 @@ runs:
   using: composite
   steps:
     - name: Restore Nuget packages
-      shell: bash
-      env:
-        DOTNET_NOLOGO: 'true'
-        DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
-        DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
-      run: dotnet restore '${{ inputs.path }}'
+      uses: EasyDesk/action-dotnet@v1
+      with:
+        script: dotnet restore '${{ inputs.path }}'
     - name: Build Solution
-      env:
-        DOTNET_NOLOGO: 'true'
-        DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
-        DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
-      shell: bash
-      run: |
-        ARGS='${{ inputs.build-args }}'
-        if [[ '${{ inputs.warnings-as-errors }}' == 'true' ]] ; then
-          ARGS="-warnaserror $ARGS"
-        fi
-        dotnet build '${{ inputs.path }}' -c '${{ inputs.build-configuration }}' --no-restore $ARGS
+      uses: EasyDesk/action-dotnet@v1
+      with:
+        script: |
+          ARGS='${{ inputs.build-args }}'
+          if [[ '${{ inputs.warnings-as-errors }}' == 'true' ]] ; then
+            ARGS="-warnaserror $ARGS"
+          fi
+          dotnet build '${{ inputs.path }}' -c '${{ inputs.build-configuration }}' --no-restore $ARGS
